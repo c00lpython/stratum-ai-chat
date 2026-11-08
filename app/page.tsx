@@ -65,7 +65,13 @@ export default function Page() {
     setDraft(''); setIsGenerating(true); setTypingTarget(reply); setTypingId(now + 1)
   }
   const copyMessage = (id: number, content: string) => { navigator.clipboard?.writeText(content); setCopied(id); window.setTimeout(() => setCopied(null), 1600) }
-  const regenerate = (id: number) => setMessages((current) => current.map((message) => message.id === id ? { ...message, content: 'Here\'s another angle: begin with one gentle anchor, then leave enough space for the day to unfold naturally.', branch: (message.branch || 1) + 1 } : message))
+  const regenerate = (id: number) => {
+    const reply = "Here's another angle: begin with one gentle anchor, then leave enough space for the day to unfold naturally."
+    setMessages((current) => current.map((message) => message.id === id ? { ...message, content: '', branch: (message.branch || 1) + 1 } : message))
+    setIsGenerating(true)
+    setTypingTarget(reply)
+    setTypingId(id)
+  }
   const startEdit = (message: Message) => { setEditingId(message.id); setEditingText(message.content) }
   const saveEdit = (id: number) => { setMessages((current) => current.map((message) => message.id === id ? { ...message, content: editingText, edited: true } : message)); setEditingId(null) }
   const togglePin = (id: number) => setChats((current) => current.map((chat) => chat.id === id ? { ...chat, pinned: !chat.pinned } : chat))
