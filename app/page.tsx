@@ -10,6 +10,7 @@ import {
   Command,
   Copy,
   FileText,
+  Home,
   Menu,
   MoreHorizontal,
   Paperclip,
@@ -17,6 +18,7 @@ import {
   Search,
   Settings2,
   Sparkles,
+  UserRound,
   SquarePen,
   User,
 } from 'lucide-react'
@@ -124,8 +126,22 @@ export default function Page() {
       <section className="conversation">
         <header className="conversation-header">
           <button className="icon-button menu-button" aria-label="Open sidebar" onClick={() => setSidebarOpen(true)}><Menu size={19} /></button>
-          <div className="conversation-title"><span>Morning notes</span><ChevronDown size={15} /></div>
-          <div className="header-actions"><button className="icon-button" aria-label="Edit conversation"><SquarePen size={17} /></button><button className="icon-button" aria-label="More options"><MoreHorizontal size={18} /></button></div>
+          <div className="live-brand">Stratum <span>AI</span></div>
+          <nav className="live-nav" aria-label="Primary navigation">
+            <a href="#home"><Home size={14} /> Home</a>
+            <a href="#project">ProjectName</a>
+            <a href="#live" className="live-nav-active" aria-current="page">Live</a>
+            <a href="#collab">Collab</a>
+          </nav>
+          <div className="live-header-actions">
+            <label className="live-search">
+              <Search size={14} />
+              <input aria-label="Search" placeholder="Search" />
+              <kbd>⌘ K</kbd>
+            </label>
+            <button className="icon-button" aria-label="Account"><UserRound size={17} /></button>
+            <button className="icon-button" aria-label="Settings"><Settings2 size={17} /></button>
+          </div>
         </header>
 
         <div className="message-area">
