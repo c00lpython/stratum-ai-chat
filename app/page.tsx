@@ -12,6 +12,7 @@ import {
   FileText,
   Home,
   Menu,
+  Mic,
   MoreHorizontal,
   Paperclip,
   Plus,
@@ -57,6 +58,29 @@ export default function Page() {
   const [draft, setDraft] = useState('')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [copied, setCopied] = useState<number | null>(null)
+  const [isListening, setIsListening] = useState(false)
+
+  const toggleVoiceInput = () => {
+    const browserWindow = window as typeof window & { SpeechRecognition?: any; webkitSpeechRecognition?: any }
+    const SpeechRecognition = browserWindow.SpeechRecognition || browserWindow.webkitSpeechRecognition
+    if (!SpeechRecognition) return
+    if (isListening) {
+      setIsListening(false)
+      return
+    }
+    const recognition = new SpeechRecognition()
+    recognition.continuous = false
+    recognition.interimResults = false
+    recognition.lang = 'en-US'
+    recognition.onresult = (event) => {
+      setDraft((current) => `${current}${current ? ' ' : ''}${event.results[0][0].transcript}`)
+      setIsListening(false)
+    }
+    recognition.onerror = () => setIsListening(false)
+    recognition.onend = () => setIsListening(false)
+    recognition.start()
+    setIsListening(true)
+  }
 
   const sendMessage = () => {
     const trimmed = draft.trim()
@@ -167,7 +191,7 @@ export default function Page() {
         <div className="composer-wrap">
           <div className="composer">
             <textarea aria-label="Message Lume" value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && event.keyCode !== 229) { event.preventDefault(); sendMessage() } }} placeholder="Continue the conversation..." rows={1} />
-            <div className="composer-footer"><div className="composer-left"><button className="composer-icon" aria-label="Attach file"><Paperclip size={17} /></button><button className="model-button"><Bot size={15} /> Lume <ChevronDown size={13} /></button></div><div className="composer-right"><span className="composer-hint"><Command size={12} /> Enter to send</span><button className="send-button" aria-label="Send message" onClick={sendMessage}><ArrowUp size={17} /></button></div></div>
+            <div className="composer-footer"><div className="composer-left"><button className="composer-icon" aria-label="Attach file"><Paperclip size={17} /></button><button className="model-button"><Bot size={15} /> Lume <ChevronDown size={13} /></button></div><div className="composer-right"><span className="composer-hint"><Command size={12} /> Enter to send</span><button className={`voice-button ${isListening ? 'voice-button-active' : ''}`} aria-label={isListening ? 'Stop voice input' : 'Start voice input'} aria-pressed={isListening} onClick={toggleVoiceInput}><Mic size={16} /></button><button className="send-button" aria-label="Send message" onClick={sendMessage}><ArrowUp size={17} /></button></div></div>
           </div>
           <p className="composer-note">Lume can make mistakes. Check important information.</p>
         </div>
