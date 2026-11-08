@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Archive, ArrowUp, Bot, Check, ChevronDown, Command, Copy, FileText, GitBranch, Home, Menu, Mic, MoreHorizontal, Paperclip, Pencil, Pin, Plus, RotateCcw, Search, Settings2, Sparkles, Trash2, User, UserRound } from 'lucide-react'
 
 type Message = { id: number; role: 'user' | 'assistant'; content: string; edited?: boolean; branch?: number }
@@ -28,6 +28,23 @@ export default function Page() {
   const [editingText, setEditingText] = useState('')
   const [openChatMenu, setOpenChatMenu] = useState<number | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [typingId, setTypingId] = useState<number | null>(null)
+  const [typingTarget, setTypingTarget] = useState('')
+
+  useEffect(() => {
+    if (typingId === null || !typingTarget) return
+    let index = 0
+    const timer = window.setInterval(() => {
+      index += 1
+      setMessages((current) => current.map((message) => message.id === typingId ? { ...message, content: typingTarget.slice(0, index) } : message))
+      if (index >= typingTarget.length) {
+        window.clearInterval(timer)
+        setTypingId(null)
+        setIsGenerating(false)
+      }
+    }, 22)
+    return () => window.clearInterval(timer)
+  }, [typingId, typingTarget])
 
   const toggleVoiceInput = () => {
     const browserWindow = window as typeof window & { SpeechRecognition?: any; webkitSpeechRecognition?: any }
@@ -43,8 +60,9 @@ export default function Page() {
   const sendMessage = () => {
     const trimmed = draft.trim(); if (!trimmed || isGenerating) return
     const now = Date.now()
-    setMessages((current) => [...current, { id: now, role: 'user', content: trimmed }, { id: now + 1, role: 'assistant', content: 'That sounds like a meaningful direction. I\'d start with one small anchor, protect a little quiet, and let the rest of the morning stay flexible.' }])
-    setDraft(''); setIsGenerating(false)
+    const reply = 'That sounds like a meaningful direction. I\'d start with one small anchor, protect a little quiet, and let the rest of the morning stay flexible.'
+    setMessages((current) => [...current, { id: now, role: 'user', content: trimmed }, { id: now + 1, role: 'assistant', content: '' }])
+    setDraft(''); setIsGenerating(true); setTypingTarget(reply); setTypingId(now + 1)
   }
   const copyMessage = (id: number, content: string) => { navigator.clipboard?.writeText(content); setCopied(id); window.setTimeout(() => setCopied(null), 1600) }
   const regenerate = (id: number) => setMessages((current) => current.map((message) => message.id === id ? { ...message, content: 'Here\'s another angle: begin with one gentle anchor, then leave enough space for the day to unfold naturally.', branch: (message.branch || 1) + 1 } : message))
