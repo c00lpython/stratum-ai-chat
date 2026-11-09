@@ -33,8 +33,10 @@ export default function Page() {
 
   useEffect(() => {
     if (typingId === null || !typingTarget) return
-    let index = 0
-    const timer = window.setInterval(() => {
+  let index = 0
+  let timer: number | undefined
+  const startTyping = window.setTimeout(() => {
+    timer = window.setInterval(() => {
       index += 1
       setMessages((current) => current.map((message) => message.id === typingId ? { ...message, content: typingTarget.slice(0, index) } : message))
       if (index >= typingTarget.length) {
@@ -43,7 +45,11 @@ export default function Page() {
         setIsGenerating(false)
       }
     }, 22)
-    return () => window.clearInterval(timer)
+  }, 850)
+  return () => {
+    window.clearTimeout(startTyping)
+    if (timer !== undefined) window.clearInterval(timer)
+  }
   }, [typingId, typingTarget])
 
   const toggleVoiceInput = () => {
