@@ -97,7 +97,7 @@ export default function Page() {
   )
 
   return (
-    <main className="app-shell">
+    <main className="app-shell app-enter">
       <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-top"><div className="brand-mark"><Sparkles size={16} strokeWidth={2.5} /></div><span className="brand-name">Lume</span><button className="icon-button sidebar-close" aria-label="Close sidebar" onClick={() => setSidebarOpen(false)}>×</button></div>
         <button className="new-chat" onClick={() => { setMessages([]); setSidebarOpen(false) }}><Plus size={16} /><span>New chat</span><span className="new-chat-shortcut">⌘ K</span></button>
