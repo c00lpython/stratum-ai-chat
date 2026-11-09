@@ -30,6 +30,13 @@ export default function Page() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [typingId, setTypingId] = useState<number | null>(null)
   const [typingTarget, setTypingTarget] = useState('')
+  const [isChatTransitioning, setIsChatTransitioning] = useState(false)
+
+  const runChatTransition = (update: () => void) => {
+    setIsChatTransitioning(true)
+    update()
+    window.setTimeout(() => setIsChatTransitioning(false), 620)
+  }
 
   useEffect(() => {
     if (typingId === null || !typingTarget) return
@@ -86,7 +93,7 @@ export default function Page() {
 
   const renderChat = (chat: Chat) => (
     <div className={`chat-item-wrap ${chat.pinned ? 'chat-item-pinned' : ''}`} key={chat.id}>
-      <button className="chat-item" onClick={() => { setMessages(seedMessages); setSidebarOpen(false) }}>
+      <button className="chat-item" onClick={() => runChatTransition(() => { setMessages(seedMessages); setSidebarOpen(false) })}>
         <span className="chat-item-icon">{chat.pinned ? <Pin size={13} /> : <FileText size={14} />}</span>
         <span className="chat-item-copy"><span>{chat.title}</span><small>{chat.time}</small></span>
         {chat.pinned && <span className="pinned-label">Pinned</span>}
@@ -97,10 +104,10 @@ export default function Page() {
   )
 
   return (
-    <main className="app-shell app-enter">
+    <main className={`app-shell app-enter ${isChatTransitioning ? 'chat-transitioning' : ''}`}>
       <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-top"><div className="brand-mark"><Sparkles size={16} strokeWidth={2.5} /></div><span className="brand-name">Lume</span><button className="icon-button sidebar-close" aria-label="Close sidebar" onClick={() => setSidebarOpen(false)}>×</button></div>
-        <button className="new-chat" onClick={() => { setMessages([]); setSidebarOpen(false) }}><Plus size={16} /><span>New chat</span><span className="new-chat-shortcut">⌘ K</span></button>
+        <button className="new-chat" onClick={() => runChatTransition(() => { setMessages([]); setSidebarOpen(false) })}><Plus size={16} /><span>New chat</span><span className="new-chat-shortcut">⌘ K</span></button>
         <div className="search-box"><Search size={15} /><input aria-label="Search chats" placeholder="Search chats" /><span className="search-key">⌘</span></div>
         <nav className="chat-list" aria-label="Chats"><p className="section-label">Pinned chats</p>{chats.filter((chat) => chat.pinned).map(renderChat)}<p className="section-label all-chats-label">All chats</p>{chats.filter((chat) => !chat.pinned).map(renderChat)}</nav>
         <div className="sidebar-bottom"><button className="sidebar-link"><Archive size={15} /> Archive</button><button className="sidebar-link"><Settings2 size={15} /> Settings</button><div className="profile-card"><div className="avatar avatar-user">AM</div><div><strong>Alex Morgan</strong><span>Personal workspace</span></div><MoreHorizontal size={16} className="profile-more" /></div></div>
