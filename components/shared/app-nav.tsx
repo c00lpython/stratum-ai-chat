@@ -1,6 +1,6 @@
 'use client'
 
-import { Home, Menu, Search, Settings2, UserRound } from 'lucide-react'
+import { Home, Menu, Search, Settings, UserRound } from 'lucide-react'
 
 type AppNavProps = {
   active?: 'live' | 'settings'
@@ -25,7 +25,7 @@ export function AppNav({ active = 'live', onSettings, onMenu }: AppNavProps) {
         <label className="live-search"><Search size={14} /><input aria-label="Search" placeholder="Search" /><kbd>⌘ K</kbd></label>
         <button className="icon-button" aria-label="Account"><UserRound size={17} /></button>
         <button className={`icon-button ${active === 'settings' ? 'header-icon-active' : ''}`} aria-label="Settings" onClick={onSettings}>
-          <Settings2 size={17} />
+          <Settings size={17} />
         </button>
       </div>
     </header>
