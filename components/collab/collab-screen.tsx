@@ -21,6 +21,7 @@ import {
   Video,
   Volume2,
 } from 'lucide-react'
+import { AnimatedGridPattern } from '@/components/ui/animated-grid-pattern'
 import { BlurFade } from '@/components/ui/blur-fade'
 import { ShimmerButton } from '@/components/ui/shimmer-button'
 import { AppNav } from '@/components/shared/app-nav'
@@ -58,6 +59,7 @@ export default function CollabScreen() {
   if (!joined) {
     return (
       <main className="collab-page collab-entry">
+        <AnimatedGridPattern className="collab-grid-pattern" numSquares={18} maxOpacity={0.16} duration={5} repeatDelay={1} />
         <AppNav active="collab" />
         <BlurFade className="collab-join-motion" direction="up" offset={18} blur="12px"><section className="collab-join-card">
           <div className="collab-join-icon"><Users size={26} /></div>
