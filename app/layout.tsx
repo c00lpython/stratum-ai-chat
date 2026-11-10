@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Lume — A quieter way to think',
-  description: 'An intentional AI chat space for thoughtful conversations.',
+  title: 'Stratum AI — A quieter way to think',
+  description: 'Stratum AI is an intentional workspace for thoughtful conversations.',
   generator: 'v0.app',
   icons: {
     icon: [
