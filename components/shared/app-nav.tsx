@@ -3,7 +3,7 @@
 import { Home, Menu, Search, Settings, UserRound } from 'lucide-react'
 
 type AppNavProps = {
-  active?: 'live' | 'settings'
+  active?: 'live' | 'settings' | 'collab'
   onSettings?: () => void
   onMenu?: () => void
 }
@@ -18,8 +18,8 @@ export function AppNav({ active = 'live', onSettings, onMenu }: AppNavProps) {
       <nav className="live-nav" aria-label="Primary navigation">
         <a href="#home"><Home size={14} /> Home</a>
         <a href="#project">ProjectName</a>
-        <a href="#live" className={active === 'live' ? 'live-nav-active' : ''} aria-current={active === 'live' ? 'page' : undefined}>Live</a>
-        <a href="#collab">Collab</a>
+        <a href="/" className={active === 'live' ? 'live-nav-active' : ''} aria-current={active === 'live' ? 'page' : undefined}>Live</a>
+        <a href="/collab" className={active === 'collab' ? 'live-nav-active' : ''} aria-current={active === 'collab' ? 'page' : undefined}>Collab</a>
       </nav>
       <div className="live-header-actions">
         <label className="live-search"><Search size={14} /><input aria-label="Search" placeholder="Search" /><kbd>⌘ K</kbd></label>
