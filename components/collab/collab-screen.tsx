@@ -4,10 +4,13 @@ import { useState } from 'react'
 import {
   ArrowRight,
   Bell,
+  MoreHorizontal,
+  UserRound,
   ChevronDown,
   Hash,
   Headphones,
   Mic,
+  MessageSquare,
   Plus,
   Search,
   Send,
@@ -40,6 +43,15 @@ export default function CollabScreen() {
   const [activeChannel, setActiveChannel] = useState('general')
   const [draft, setDraft] = useState('')
   const [showProjectMenu, setShowProjectMenu] = useState(false)
+  const [profile, setProfile] = useState<{ name: string; initials: string; role: string; color: string } | null>(null)
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; label: string } | null>(null)
+
+  const openContextMenu = (event: React.MouseEvent, label: string) => {
+    event.preventDefault()
+    event.stopPropagation()
+    window.setTimeout(() => setProfile(null), 0)
+    setContextMenu({ x: Math.min(event.clientX, window.innerWidth - 210), y: Math.min(event.clientY, window.innerHeight - 170), label })
+  }
 
   if (!joined) {
     return (
@@ -62,7 +74,7 @@ export default function CollabScreen() {
   }
 
   return (
-    <main className="collab-page collab-workspace">
+    <main className="collab-page collab-workspace" onClick={() => setContextMenu(null)}>
       <AppNav active="collab" />
       <div className="collab-layout">
         <aside className="collab-rail">
@@ -76,12 +88,14 @@ export default function CollabScreen() {
 
         <section className="collab-main">
           <header className="collab-channel-head"><div><p className="collab-channel-title"><Hash size={18} /> {activeChannel}</p><span>Share updates, coordinate agents, and keep the team in sync.</span></div><div className="collab-head-actions"><button className="collab-icon-button" aria-label="Notifications"><Bell size={17} /></button><button className="collab-icon-button" aria-label="Search messages"><Search size={17} /></button><button className="collab-member-count"><Users size={15} /> 12</button></div></header>
-          <div className="collab-message-list">{messages.map((message) => <article className="collab-message" key={message.name}><div className={`avatar avatar-${message.color}`}>{message.initials}</div><div><div className="collab-message-meta"><strong>{message.name}</strong><span className={`role-chip ${message.color}`}>{message.role}</span><time>{message.time}</time></div><p>{message.text}</p><div className="collab-message-tools"><button>Reply</button><button>React</button><button>More</button></div></div></article>)}</div>
+          <div className="collab-message-list">{messages.map((message) => <article className="collab-message" key={message.name} onContextMenu={(event) => openContextMenu(event, message.name)} onClick={(event) => { if (event.button === 0) { event.stopPropagation(); setProfile(message) } }}><div className={`avatar avatar-${message.color}`}>{message.initials}</div><div><div className="collab-message-meta"><strong>{message.name}</strong><span className={`role-chip ${message.color}`}>{message.role}</span><time>{message.time}</time></div><p>{message.text}</p><div className="collab-message-tools"><button>Reply</button><button>React</button><button>More</button></div></div></article>)}</div>
           <form className="collab-composer" onSubmit={(event) => { event.preventDefault(); setDraft('') }}><button type="button" className="collab-composer-icon" aria-label="Add attachment"><Plus size={18} /></button><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={`Message #${activeChannel}`} aria-label="Message channel" /><button type="button" className="collab-composer-icon" aria-label="Start voice"><Mic size={17} /></button><button className="collab-send" aria-label="Send message"><Send size={16} /></button></form>
         </section>
 
-        <aside className="collab-members"><div className="collab-members-head"><strong>Members — 12</strong><button aria-label="Invite members"><Plus size={15} /></button></div><p className="member-group-label">ONLINE — 4</p><div className="member-list">{[['Elena Rostova','ER','Owner','orange'],['Alex Kutkovoy','AK','Lead','violet'],['Olive Parker','OP','Member','cyan'],['Stratum AI','AI','Agent','orange']].map(([name, initials, role, color]) => <div className="member-row" key={name}><div className={`avatar avatar-${color}`}>{initials}</div><div><strong>{name}</strong><small><span className="status-dot online" /> {role}</small></div>{name === 'Alex Kutkovoy' && <Volume2 className="speaking" size={14} />}</div>)}</div><p className="member-group-label">VOICE LOUNGE</p><div className="voice-room"><Headphones size={16} /><div><strong>Team voice</strong><small>Alex is speaking</small></div><Video size={15} /></div></aside>
+        <aside className="collab-members"><div className="collab-members-head"><strong>Members — 12</strong><button aria-label="Invite members"><Plus size={15} /></button></div><p className="member-group-label">ONLINE — 4</p><div className="member-list">{[['Elena Rostova','ER','Owner','orange'],['Alex Kutkovoy','AK','Lead','violet'],['Olive Parker','OP','Member','cyan'],['Stratum AI','AI','Agent','orange']].map(([name, initials, role, color]) => <button className="member-row" key={name} onClick={(event) => { event.stopPropagation(); setProfile({ name, initials, role, color }) }} onContextMenu={(event) => openContextMenu(event, name)}><div className={`avatar avatar-${color}`}>{initials}</div><div><strong>{name}</strong><small><span className="status-dot online" /> {role}</small></div>{name === 'Alex Kutkovoy' && <Volume2 className="speaking" size={14} />}</button>)}</div><p className="member-group-label">VOICE LOUNGE</p><div className="voice-room"><Headphones size={16} /><div><strong>Team voice</strong><small>Alex is speaking</small></div><Video size={15} /></div></aside>
       </div>
+      {profile && <div className="collab-profile-popover" onClick={(event) => event.stopPropagation()}><button className="collab-profile-close" onClick={() => setProfile(null)} aria-label="Close profile">×</button><div className={`avatar avatar-${profile.color} profile-avatar`}>{profile.initials}</div><strong>{profile.name}</strong><span>{profile.role} · Stratum Core</span><div className="profile-actions"><button>Message</button><button>View activity</button></div></div>}
+      {contextMenu && <div className="collab-context-menu" style={{ left: contextMenu.x, top: contextMenu.y }} onClick={(event) => event.stopPropagation()}><strong>{contextMenu.label}</strong><button><UserRound size={14} /> View profile</button><button><MessageSquare size={14} /> Reply</button><button><MoreHorizontal size={14} /> More actions</button></div>}
     </main>
   )
 }
