@@ -21,6 +21,8 @@ import {
   Video,
   Volume2,
 } from 'lucide-react'
+import { BlurFade } from '@/components/ui/blur-fade'
+import { ShimmerButton } from '@/components/ui/shimmer-button'
 import { AppNav } from '@/components/shared/app-nav'
 
 type Channel = { name: string; icon: typeof Hash; unread?: number }
@@ -57,7 +59,7 @@ export default function CollabScreen() {
     return (
       <main className="collab-page collab-entry">
         <AppNav active="collab" />
-        <section className="collab-join-card">
+        <BlurFade className="collab-join-motion" direction="up" offset={18} blur="12px"><section className="collab-join-card">
           <div className="collab-join-icon"><Users size={26} /></div>
           <p className="eyebrow">COLLAB SPACE</p>
           <h1>Time to join</h1>
@@ -66,9 +68,9 @@ export default function CollabScreen() {
             <div><span className="status-dot online" /><div><strong>Stratum Core Squad</strong><small>12 members online · Voice active</small></div><ArrowRight size={16} /></div>
             <div><span className="status-dot violet" /><div><strong>Architecture Lab</strong><small>Room STRAT-4921 · Ready to sync</small></div><ArrowRight size={16} /></div>
           </div>
-          <button className="collab-primary-button" onClick={() => setJoined(true)}>Join Collab Space <ArrowRight size={16} /></button>
+          <ShimmerButton className="collab-primary-button" shimmerColor="#ffb18e" background="#ff7547" onClick={() => setJoined(true)}>Join Collab Space <ArrowRight size={16} /></ShimmerButton>
           <p className="collab-hint">Use an invite code or create a new workspace from the project menu.</p>
-        </section>
+        </section></BlurFade>
       </main>
     )
   }
@@ -88,7 +90,7 @@ export default function CollabScreen() {
 
         <section className="collab-main">
           <header className="collab-channel-head"><div><p className="collab-channel-title"><Hash size={18} /> {activeChannel}</p><span>Share updates, coordinate agents, and keep the team in sync.</span></div><div className="collab-head-actions"><button className="collab-icon-button" aria-label="Notifications"><Bell size={17} /></button><button className="collab-icon-button" aria-label="Search messages"><Search size={17} /></button><button className="collab-member-count"><Users size={15} /> 12</button></div></header>
-          <div className="collab-message-list">{messages.map((message) => <article className="collab-message" key={message.name} onContextMenu={(event) => openContextMenu(event, message.name)} onClick={(event) => { if (event.button === 0) { event.stopPropagation(); setProfile(message) } }}><div className={`avatar avatar-${message.color}`}>{message.initials}</div><div><div className="collab-message-meta"><strong>{message.name}</strong><span className={`role-chip ${message.color}`}>{message.role}</span><time>{message.time}</time></div><p>{message.text}</p><div className="collab-message-tools"><button>Reply</button><button>React</button><button>More</button></div></div></article>)}</div>
+          <div className="collab-message-list">{messages.map((message, index) => <BlurFade key={message.name} className="collab-message-motion" direction="up" offset={10} delay={index * 0.06}><article className="collab-message" key={message.name} onContextMenu={(event) => openContextMenu(event, message.name)} onClick={(event) => { if (event.button === 0) { event.stopPropagation(); setProfile(message) } }}><div className={`avatar avatar-${message.color}`}>{message.initials}</div><div><div className="collab-message-meta"><strong>{message.name}</strong><span className={`role-chip ${message.color}`}>{message.role}</span><time>{message.time}</time></div><p>{message.text}</p><div className="collab-message-tools"><button>Reply</button><button>React</button><button>More</button></div></div></article></BlurFade>)}</div>
           <form className="collab-composer" onSubmit={(event) => { event.preventDefault(); setDraft('') }}><button type="button" className="collab-composer-icon" aria-label="Add attachment"><Plus size={18} /></button><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={`Message #${activeChannel}`} aria-label="Message channel" /><button type="button" className="collab-composer-icon" aria-label="Start voice"><Mic size={17} /></button><button className="collab-send" aria-label="Send message"><Send size={16} /></button></form>
         </section>
 
